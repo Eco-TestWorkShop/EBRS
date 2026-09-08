@@ -3,7 +3,6 @@ import { Link } from "react-router-dom";
 import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
 import axios from "../../../apis/axios";
 import { useNavigate, useLocation } from "react-router-dom";
-import toast from "react-hot-toast";
 
 import {
   FormControl,
@@ -16,6 +15,7 @@ import {
   Text,
   InputRightElement,
   InputGroup,
+  useToast,
 } from "@chakra-ui/react";
 import { useAuth } from "../../../hooks/useAuth";
 
@@ -27,7 +27,7 @@ interface LoginCredentials {
 const LoginForm: React.FC = () => {
   const navigate = useNavigate();
   const stateLocation = useLocation().state;
-
+  const toast = useToast({ position: "top" });
   const { login } = useAuth();
   const [data, setData] = useState<LoginCredentials>({
     email: "",
@@ -86,34 +86,55 @@ const LoginForm: React.FC = () => {
       });
 
       const userRes = response?.data?.user;
+      console.log("userRes", userRes);
       login({
         id: userRes.id,
         name: userRes?.name,
         email: userRes?.email,
         birthdate: userRes?.birthdate,
         phone: userRes?.phone,
+        image: userRes?.image,
       });
       setData({ email: "", password: "" });
       setErrMsg("");
       setIsSubmitting(false);
       navigate(stateLocation?.from ? stateLocation.from : "/");
-      toast.success("Login successful", { icon: "👏" });
+      toast({
+        title: "Login Successful",
+        description: "You have successfully logged in.",
+        status: "success",
+        duration: 2000,
+        isClosable: true,
+      });
     } catch (error: any) {
       if (!error?.response) {
         setErrMsg("Something went wrong. Please try again later.");
-        toast.error("Something went wrong. Please try again later.");
+        toast({
+          title: "Error",
+          description: "Something went wrong. Please try again later.",
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+        });
       } else if (error.response?.status === 400) {
         setErrMsg(error.response.data?.message[0]);
-        toast.error(error.response.data?.message[0]);
+        toast({
+          title: "Error",
+          description: error.response.data?.message[0],
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+        });
       } else if (error.response?.status === 401) {
         setErrMsg(error.response.data?.message);
-        toast.error(error.response.data?.message);
+        toast({
+          title: "Error",
+          description: error.response.data?.message[0],
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+        });
       }
-
-      console.log(data);
-      console.log(error);
-      console.log(errEmail, errPassword);
-      console.log(errMsg);
     } finally {
       setIsSubmitting(false);
     }

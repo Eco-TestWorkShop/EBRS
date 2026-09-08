@@ -1,10 +1,4 @@
 name: Deploy DEV
-env:
-    JWT_SIGNATURE: ${{ vars.JWT_SIGNATURE }}
-    CORS_ALLOW_URL: ${{ vars.CORS_ALLOW_URL }}
-    API_PORT: ${{ vars.API_PORT }}
-    CLIENT_ID: ${{ vars.CLIENT_ID }}
-    CLIENT_SECRET: ${{ vars.CLIENT_SECRET }}
 on:
   push:
     branches:
@@ -16,17 +10,34 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
+      - name: Set ENV
+        run: |
+          if [ "${{ github.ref }}" == "refs/heads/main" ]; then
+            echo "SERVER_HOST=${{ vars.PROD_SERVER_HOST }}" >> $GITHUB_ENV
+            echo "SERVER_USERNAME=${{ vars.PROD_SERVER_USERNAME }}" >> $GITHUB_ENV
+          elif [ "${{ github.ref }}" == "refs/heads/dev" ]; then
+            echo "SERVER_HOST=${{ vars.DEV_SERVER_HOST }}" >> $GITHUB_ENV
+            echo "SERVER_USERNAME=${{ vars.DEV_SERVER_USERNAME }}" >> $GITHUB_ENV
+          fi
       - name: Deploy to Server
         uses: appleboy/ssh-action@master
         with:
           host: ${{ env.SERVER_HOST }}
           username: ${{ env.SERVER_USERNAME }}
-          key: ${{ vars.SSH_PRIVATE_KEY }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: ${{ vars.SSH_PORT }}
           script: |
+            export DATABASE_URL=${{ secrets.DATABASE_URL }}
+            export DATABASE_URL_LOCAL=${{ secrets.DATABASE_URL_LOCAL }}
+            export DATABASE_URL_DEV=${{ secrets.DEV_PDATABASE_URL }}
+            export DATABASE_URL_PROD=${{ secrets.PROD_PDATABASE_URL }}
+            export POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}
+            export JWT_SIGNATURE=${{ secrets.JWT_SIGNATURE }}
+            export CLIENT_ID=${{ secrets.CLIENT_ID }}
+            export CLIENT_SECRET=${{ secrets.CLIENT_SECRET }}
             echo "--------"
-            echo "### CMD: cd BikeHub"
-            cd BikeHub
+            echo "### CMD: cd EcoWheel"
+            cd EcoWheel
             echo "Done!"
             echo "--------"
             echo "### CMD: git reset --hard"
@@ -52,29 +63,40 @@ jobs:
             npm install && yarn install
             echo "Done!"
             echo "--------"
-            echo "### CMD: cd ~/BikeHub/api && cp .env.example .env"
-            cd ~/BikeHub/api && cp .env.example .env
+            echo "### CMD: cd ~/EcoWheel/api && cp .env.example .env"
+            cd ~/EcoWheel/api && cp .env.example .env
             echo "Done!"
             echo "--------"
             if [ "${{ github.ref }}" = "refs/heads/main" ]; then
               echo "start deploying in ${{ github.ref }}"
+
               echo "### CMD: change VITE_MODE to prod"
-              sed -i 's/^VITE_MODE=.*/VITE_MODE=prod/' ~/BikeHub/frontend/.env
+              sed -i 's/^VITE_MODE=.*/VITE_MODE=prod/' ~/EcoWheel/frontend/.env
               echo "Done!"
+
               echo "### CMD: change DB_MODE/NODE_ENV to local"
-              sed -i 's/^NODE_ENV=.*/NODE_ENV=prod/' ~/BikeHub/api/.env
-              sed -i 's/^DB_MODE=.*/DB_MODE=local/' ~/BikeHub/api/.env
+              sed -i 's/^NODE_ENV=.*/NODE_ENV=prod/' ~/EcoWheel/api/.env
+              sed -i 's/^DB_MODE=.*/DB_MODE=local/' ~/EcoWheel/api/.env
               echo "Done!"
-              echo "### CMD: cd ~/BikeHub/api && yarn build"
-              cd ~/BikeHub/api && yarn build
+
+              echo "### CMD: cd ~/EcoWheel/admin && yarn build"
+              cd ~/EcoWheel/admin && yarn build
+              echo "### CMD: pm2 reload startadmin --update-env"
+              pm2 reload startadmin --update-env
+
+              echo "### CMD: cd ~/EcoWheel/api && yarn build"
+              cd ~/EcoWheel/api && yarn build
               echo "### CMD: pm2 reload startapi --update-env"
               pm2 reload startapi --update-env
-              echo "### CMD: cd ~/BikeHub/frontend && yarn build"
-              cd ~/BikeHub/frontend && yarn build
+
+              echo "### CMD: cd ~/EcoWheel/frontend && yarn build"
+              cd ~/EcoWheel/frontend && yarn build
               echo "### CMD: pm2 reload startfrontend --update-env"
               pm2 reload startfrontend --update-env
+
               echo "### CMD: pm2 reload prisma --update-env"
               pm2 reload prisma --update-env
+
               echo "### CMD: update deploy.txt"
               echo "---------------------------" >> deploy.txt
               echo "Date: $(date)" >> deploy.txt
@@ -92,23 +114,34 @@ jobs:
             fi
             if [ "${{ github.ref }}" = "refs/heads/dev" ]; then
               echo "start deploying in ${{ github.ref }}"
+
               echo "### CMD: change VITE_MODE to dev"
-              sed -i 's/^VITE_MODE=.*/VITE_MODE=dev/' ~/BikeHub/frontend/.env
+              sed -i 's/^VITE_MODE=.*/VITE_MODE=dev/' ~/EcoWheel/frontend/.env
               echo "Done!"
+
               echo "### CMD: change DB_MODE/NODE_ENV to local"
-              sed -i 's/^NODE_ENV=.*/NODE_ENV=dev/' ~/BikeHub/api/.env
-              sed -i 's/^DB_MODE=.*/DB_MODE=local/' ~/BikeHub/api/.env
+              sed -i 's/^NODE_ENV=.*/NODE_ENV=dev/' ~/EcoWheel/api/.env
+              sed -i 's/^DB_MODE=.*/DB_MODE=local/' ~/EcoWheel/api/.env
               echo "Done!"
-              echo "### CMD: cd ~/BikeHub/api && yarn build"
-              cd ~/BikeHub/api && yarn build
+
+              echo "### CMD: cd ~/EcoWheel/admin && yarn build"
+              cd ~/EcoWheel/admin && yarn build
+              echo "### CMD: pm2 reload startadmin --update-env"
+              pm2 reload startadmin --update-env
+
+              echo "### CMD: cd ~/EcoWheel/api && yarn build"
+              cd ~/EcoWheel/api && yarn build
               echo "### CMD: pm2 reload startapi --update-env"
               pm2 reload startapi --update-env
-              echo "### CMD: cd ~/BikeHub/frontend && yarn build"
-              cd ~/BikeHub/frontend && yarn build
+
+              echo "### CMD: cd ~/EcoWheel/frontend && yarn build"
+              cd ~/EcoWheel/frontend && yarn build
               echo "### CMD: pm2 reload startfrontend --update-env"
               pm2 reload startfrontend --update-env
+
               echo "### CMD: pm2 reload prisma --update-env"
               pm2 reload prisma --update-env
+
               echo "### CMD: update deploy.txt"
               echo "---------------------------" >> deploy.txt
               echo "Date: $(date)" >> deploy.txt
@@ -125,4 +158,3 @@ jobs:
               echo "Done!"
             fi
             echo "--------"
-

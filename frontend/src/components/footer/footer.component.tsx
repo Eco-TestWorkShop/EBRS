@@ -1,6 +1,6 @@
 import { Box, Button, Flex, Image, Link as A } from "@chakra-ui/react";
 import { Link } from "react-router-dom";
-import logoImage from "../../assets/images/logov2.png";
+import logoImage from "../../assets/images/logo2.png";
 
 const Footer = () => {
   const footerItems = [
@@ -16,7 +16,7 @@ const Footer = () => {
           <Link to="/">
             <Image src={logoImage} width={"150px"} />
           </Link>
-          <Flex gap="8" flexDirection={{ base: "column", md: "row" }}>
+          <Flex gap="8" mr={35} flexDirection={{ base: "column", md: "row" }}>
             <Link to="/">
               <Button
                 paddingStart={0}
@@ -40,7 +40,7 @@ const Footer = () => {
             </Link>
 
             {footerItems.map((item, i) => (
-              <A key={i} href={item.path}>
+              <A key={i} href={window.location.origin + "/" + item.path}>
                 <Button
                   paddingStart={0}
                   paddingEnd={0}
@@ -62,15 +62,17 @@ const Footer = () => {
                 </Button>
               </A>
             ))}
+            
           </Flex>
         </div>
         <hr className="my-6 border-gray-200 sm:mx-auto dark:border-gray-700 lg:my-8" />
         <span className="block text-sm text-center text-gray-500 sm:text-center dark:text-gray-400">
-          © 2023{" "}
+          © 2025{" "}
           <Link to="/" className="hover:underline">
-            BikeHub
+            EcoWheel
           </Link>
-          . All Rights Reserved.
+          . All Rights Reserved.<br />
+          <Link to="#" className="hover:underline">Made with ❤️ by EcoWheel Team & Bio.</Link>
         </span>
       </div>
     </footer>

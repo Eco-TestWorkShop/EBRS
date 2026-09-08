@@ -21,7 +21,7 @@ import { CreateRentalDto, UpdateRentalDto } from './rental.dto';
 @ApiTags('rentals')
 @Controller('/rentals')
 export class RentalController {
-  constructor(private rentalService: RentalService) {}
+  constructor(private rentalService: RentalService) { }
 
   @Get('/')
   @Roles(ROLES_ENUM.ADMIN)
@@ -30,10 +30,19 @@ export class RentalController {
     return this.rentalService.findAll({});
   }
 
+  @Get('rental/check')
+  @Roles(ROLES_ENUM.ADMIN)
+  @UseGuards(JwtAuthGuard)
+  async getFirstUser(): Promise<RentalModel> {
+    console.log("----- check")
+    return this.rentalService.findFirst();
+  }
+
   @Get('rental/:id')
   @Roles(ROLES_ENUM.ADMIN)
   @UseGuards(JwtAuthGuard)
   async getRentalById(@Param('id') id: string): Promise<RentalModel> {
+    console.log("----- check12")
     return this.rentalService.findOne({ id: Number(id) });
   }
 
@@ -43,8 +52,13 @@ export class RentalController {
   async getRentalsByUser(
     @Param('id') id: string,
   ): Promise<RentalModel[]> {
-    return this.rentalService.findAll({ where: { user_id: Number(id) } });
+    return this.rentalService.findAll({
+      where: { user_id: Number(id) },
+      orderBy: { created_at: 'desc' }
+    });
   }
+
+
 
   @Post('rental')
   @Roles(ROLES_ENUM.ADMIN)

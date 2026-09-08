@@ -1,5 +1,5 @@
 {
-  "name": "@bike/root",
+  "name": "@eco_wheel/root",
   "version": "0.0.1",
   "description": "t",
   "private": true,
@@ -9,19 +9,25 @@
     "packages": [
       "api",
       "e2e",
-      "frontend"
+      "frontend",
+      "admin"
     ]
   },
   "scripts": {
     "test": "echo \"todo\"",
-    "build:app": "yarn workspace @bike/frontend build",
-    "build:api": "yarn workspace @bike/api build",
-    "start:app": "yarn workspace @bike/frontend start",
-    "start:api": "yarn workspace @bike/api start"
+    "dev": "concurrently \"yarn workspace @eco_wheel/api start:dev\" \"yarn workspace @eco_wheel/frontend dev\" \"yarn workspace @eco_wheel/admin start\"",
+    "migrate": "npx prisma generate --schema=./api/prisma/schema.prisma&&npx prisma db push --schema=./api/prisma/schema.prisma&&npx ts-node ./api/prisma/seeds",
+    "front": "yarn workspace @eco_wheel/frontend dev",
+    "server": "yarn workspace @eco_wheel/api start:dev",
+    "admin": "yarn workspace @eco_wheel/admin start",
+    "db:seed": "npx ts-node ./api/prisma/seeds"
   },
   "keywords": [
     "nestjs",
     "react",
     "monorepo"
-  ]
+  ],
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  }
 }

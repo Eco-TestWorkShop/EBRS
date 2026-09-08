@@ -17,7 +17,7 @@ export class EmailService {
 
   async sendEmail(to: string, subject: string, content: string): Promise<void> {
     const mailOptions = {
-      from: 'BikeHub <noreply@bikehub.me>',
+      from: 'EcoWheel <noreply@EcoWheel.me>',
       to,
       subject,
       text: content,

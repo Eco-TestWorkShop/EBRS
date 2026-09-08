@@ -156,7 +156,7 @@ const config = {
       "value": "prisma-client-js"
     },
     "output": {
-      "value": "/home/nuux/BikeHub/api/prisma/client",
+      "value": "/home/nuux/EcoWheel/api/prisma/client",
       "fromEnvVar": null
     },
     "config": {

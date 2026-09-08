@@ -4,15 +4,15 @@ import { Config } from './config.interface';
 
 export const GLOBAL_CONFIG: Config = {
   nest: {
-    port: 3000,
+    port: 3300,
   },
   cors: {
     enabled: true,
   },
   swagger: {
     enabled: true,
-    title: 'BikeHub API',
-    description: 'BikeHub API build with NestJs',
+    title: 'EcoWheel API',
+    description: 'EcoWheel API build with NestJs',
     version: '1.5',
     path: API_PREFIX,
   },

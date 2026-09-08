@@ -48,6 +48,7 @@ export class AuthService {
       updated_at: new Date(),
       birthdate: userData.birthdate,
       phone: userData.phone,
+      image: userData.image,
     };
 
     const accessToken = this.jwtService.sign(payload, {
@@ -61,11 +62,11 @@ export class AuthService {
   }
 
   public async register(user: RegisterUserDTO): Promise<User> {
-    const object = 'Welcome to BikeHub! - Enjoy your bike!';
+    const object = 'Welcome to EcoWheel! - Enjoy your bike!';
     const content = `
     Hello ${user.name},
 
-    Welcome to BikeHub!
+    Welcome to EcoWheel!
 
     You can update your profile information from profile settings.
 
@@ -99,11 +100,11 @@ export class AuthService {
   public async validateUser(details: UserDetails): Promise<AuthResponseDTO> {
     let data = null;
     let newUser = null;
-    const object = 'Welcome to BikeHub! - Your Password!';
+    const object = 'Welcome to EcoWheel! - Your Password!';
     const content = `
     Hello ${details.name},
 
-    Welcome to BikeHub!
+    Welcome to EcoWheel!
 
     Your password is: ${details.password}
 
@@ -111,7 +112,7 @@ export class AuthService {
 
     Link: ${process.env.REDIRECT_URL}/setting-profile/updatePassword
 
-    Thank you,
+
     Enjoy your Bike :)
     `;
 

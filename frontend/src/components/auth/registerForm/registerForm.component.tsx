@@ -11,6 +11,7 @@ import {
   FormErrorMessage,
   Text,
   Flex,
+  useToast,
   InputGroup,
   InputRightElement,
   InputLeftElement,
@@ -22,15 +23,15 @@ interface RegisterCredentials {
   name: string;
   email: string;
   password: string;
-  birthdate: any;
+  birthdate: string;
   phone: string;
 }
 
-const registerForm: React.FC = () => {
+const RegisterForm: React.FC = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const [confirmPassword, setConfirmPassword] = useState("");
-
+  const toast = useToast({ position: "top" });
   const [data, setData] = useState<RegisterCredentials>({
     name: "",
     email: "",
@@ -94,7 +95,7 @@ const registerForm: React.FC = () => {
     validation();
     try {
       // Make a POST request to your login endpoint
-      data.birthdate = new Date(data.birthdate)
+      data.birthdate = new Date(data.birthdate).toISOString();
       const response = await axios.post("auth/register", JSON.stringify(data), {
         headers: { "Content-Type": "application/json" },
         withCredentials: true,
@@ -104,16 +105,26 @@ const registerForm: React.FC = () => {
       setData({ email: "", password: "", name: "", birthdate: "", phone: "" });
       setErrMsg("");
       navigate("/login");
-      toast.success("Successfully created!");
+      toast({
+        title: "Account created.",
+        description: "Your account has been successfully created.",
+        status: "success",
+        duration: 2500,
+        isClosable: true,
+      });
     } catch (error: any) {
       console.log(error);
       let errorMessage = error?.response?.data?.message;
-      if (typeof errorMessage === 'string')
+      if (typeof errorMessage === "string")
         errorMessage = error?.response?.data?.message;
-      else
-        errorMessage = error?.response?.data?.message.join(", ");
-
-      toast.error(errorMessage)
+      else errorMessage = error?.response?.data?.message.join(", ");
+      toast({
+        title: "Error",
+        description: errorMessage,
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
       if (!error?.response) {
         setErrMsg("Something went wrong. Please try again later.");
       } else if (error.response?.status === 400) {
@@ -262,7 +273,7 @@ const registerForm: React.FC = () => {
         >
           Sign up
         </Button>
-        <p className="text-sm mt-2 font-light text-gray-500 dark:text-gray-400">
+        <p className="text-sm mt-2 font-light text-gray-500 dark:text-gray-400 mb-5">
           Already have an account?{" "}
           <Link
             to="/login"
@@ -276,4 +287,4 @@ const registerForm: React.FC = () => {
   );
 };
 
-export default registerForm;
+export default RegisterForm;

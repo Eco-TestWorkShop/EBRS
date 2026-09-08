@@ -1,135 +1,126 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { Heading, Box, Center, Text, Flex } from "@chakra-ui/react";
 import { Reveal } from "../../motion/reveal.component";
 import CardReview from "./cardReview.component";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { HiArrowRight, HiArrowLeft } from "react-icons/hi2";
 import { Swiper as SwiperCore } from "swiper/types";
-// Import Swiper styles
+import { motion } from "framer-motion";
+
 import "swiper/css";
 import "swiper/css/pagination";
 
-import "../../../index.css";
-
-// import required modules
-
 const SwiperReviews = () => {
   const swiperRef = useRef<SwiperCore>();
+  const [activeSlideIndex, setActiveSlideIndex] = useState(0);
 
   const reviews = [
     {
       id: 1,
-      name: "John Doe",
-      tag: "@johndoe",
+      name: "— Sarah Smith, Commuter Extraordinaire",
+      tag: "@sarahsmith",
       avatar:
-        "https://images.unsplash.com/flagged/photo-1570612861542-284f4c12e75f?q=80&w=1740&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.0.3",
       review:
-        "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, voluptatibus.",
+        "EcoWheel has redefined my biking experience! The bikes are gateways to adventure. The seamless rental process keeps me coming back. EcoWheel, you've turned my daily commute into a joyride!",
     },
     {
       id: 2,
-      name: "John Doe",
-      tag: "@johndoe",
+      name: "— Michael Johnson, Cycling Enthusiast",
+      tag: "@michaeljohnson",
       avatar:
-        "https://images.unsplash.com/flagged/photo-1570612861542-284f4c12e75f?q=80&w=1740&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-
+        "https://images.unsplash.com/photo-1527980965255-d3b416303d12?q=80&w=1480&auto=format&fit=crop&ixlib=rb-4.0.3",
       review:
-        "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, voluptatibus.",
+        "EcoWheel stands out for its commitment to excellence. The bikes are well-maintained, and the customer service is unmatched. Whether weekend or daily ride, EcoWheel is my go-to choice.",
     },
     {
       id: 3,
-      name: "John Doe",
-      tag: "@johndoe",
+      name: "— Alex Turner, Adventure Seeker",
+      tag: "@alexturner",
       avatar:
-        "https://images.unsplash.com/flagged/photo-1570612861542-284f4c12e75f?q=80&w=1740&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-
+        "https://images.unsplash.com/photo-1599566150163-29194dcaad36?q=80&w=1287&auto=format&fit=crop&ixlib=rb-4.0.3",
       review:
-        "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, voluptatibus.",
+        "Finding EcoWheel was a game-changer. Variety of bikes for all preferences and ease of renting makes spontaneous rides a breeze. Thank you, EcoWheel!",
     },
     {
       id: 4,
-      name: "John Doe",
-      tag: "@johndoe",
+      name: "— Meriem, Fitness Enthusiast",
+      tag: "@meriem",
       avatar:
-        "https://images.unsplash.com/flagged/photo-1570612861542-284f4c12e75f?q=80&w=1740&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-
+        "https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=1287&auto=format&fit=crop&ixlib=rb-4.0.3",
       review:
-        "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, voluptatibus.",
+        "EcoWheel has nailed convenience and quality. Renting a bike has never been this easy, and the bikes are top-notch. Kudos to EcoWheel for a hassle-free experience!",
     },
   ];
 
   return (
     <Flex
       id="clients"
-      height={"70vh"}
-      className="relative md:flex-row flex-col items-center justify-end gap-4"
+      minHeight={"70vh"}
+      className="relative flex-col md:flex-row items-center justify-center gap-4 overflow-hidden"
     >
-      <Box
-        className="absolute w-3/6 h-full top-1 right-1 bg-teal-50"
-        clipPath={"polygon(100% 0, 41% 0, 100% 89%)"}
-      />
-      <Box
-        className="absolute w-2/5 h-full top-0 left-0 bg-teal-50"
-        clipPath={"circle(62.2% at 13% 80%)"}
-      />
+      {/*   Big Background Circles */}
+      <Box className="absolute w-[700px] h-[700px] top-[-20%] left-[-15%] bg-green-200 rounded-full opacity-30 animate-pulse-slow -z-10" />
+      <Box className="absolute w-[500px] h-[500px] top-[40%] right-[-15%] bg-teal-200 rounded-full opacity-25 animate-pulse-slow -z-10" />
+      
+      {/*   Geometric & leaf shapes */}
+      {[...Array(12)].map((_, i) => (
+        <motion.div
+          key={i}
+          className="absolute w-3 h-3 bg-green-500 rounded-full -z-10"
+          style={{ top: `${Math.random() * 100}%`, left: `${Math.random() * 100}%` }}
+          animate={{ y: [0, -15, 0], x: [0, 10, -10, 0], rotate: [0, 360] }}
+          transition={{ repeat: Infinity, duration: 4 + Math.random() * 3, ease: "easeInOut" }}
+        />
+      ))}
 
       <Center
-        width={"300px"}
-        justifyContent={"end"}
-        alignItems={"center"}
-        // alignItems={{ base: "start", md: "center" }}
         flexDirection={"column"}
         gap={4}
+        zIndex={99}
+        className="mt-20 md:mt-40"
       >
         <Reveal>
-          <Heading
-            as="h2"
-            size={{ base: "md", md: "lg" }}
-            className="capitalizesl sm:text-start text-center"
-          >
-            What client say about us
+          <Heading as="h2" size={{ base: "md", md: "lg" }} className="text-green-800 text-center">
+            What Our Clients Say
           </Heading>
         </Reveal>
         <Reveal>
-          <Text className="text-gray-500 sm:text-base text-sm font-medium sm:text-start text-center">
-            proper busniess solution for your developing business
+          <Text className="text-gray-600 text-center sm:text-lg text-sm font-medium">
+            Discovering the Joy of Riding with EcoWheel
           </Text>
         </Reveal>
-        <Flex gap={3} alignSelf={{ base: "center", md: "start" }} zIndex={99}>
-          <div
-            className="cursor-pointer"
-            onClick={() => {
-              swiperRef.current?.slidePrev();
-            }}
-          >
-            <HiArrowLeft size={28} color={`teal`} />
-          </div>
-          <div
-            className="cursor-pointer"
+        <Flex gap={4} justifyContent="center" mt={2}>
+          <HiArrowLeft
+            size={28}
+            className={`cursor-pointer transform hover:scale-125 transition-transform ${
+              activeSlideIndex === 0 ? "text-gray-400" : "text-green-500"
+            }`}
+            onClick={() => swiperRef.current?.slidePrev()}
+          />
+          <HiArrowRight
+            size={28}
+            className={`cursor-pointer transform hover:scale-125 transition-transform ${
+              activeSlideIndex === reviews.length - 1 ? "text-gray-400" : "text-green-500"
+            }`}
             onClick={() => swiperRef.current?.slideNext()}
-          >
-            <HiArrowRight size={28} color={"teal"} />
-          </div>
+          />
         </Flex>
       </Center>
-      <Box className="sm:w-2/3  w-11/12">
+
+      {/* Swiper */}
+      <Box className="w-11/12 sm:w-2/3 mt-12 md:mt-0">
         <Swiper
           slidesPerView={1}
-          spaceBetween={18}
-          onBeforeInit={(swiper) => {
-            swiperRef.current = swiper;
-          }}
-          className="mySwiper py-5 px-[10px]"
+          spaceBetween={20}
+          onBeforeInit={(swiper) => (swiperRef.current = swiper)}
+          onSlideChange={(swiper) => setActiveSlideIndex(swiper.activeIndex)}
         >
-          {reviews.map((review, i) => {
-            return (
-              <SwiperSlide key={i}>
-                {({ isActive }) => (
-                  <CardReview review={review} isActive={isActive} />
-                )}
-              </SwiperSlide>
-            );
-          })}
+          {reviews.map((review, i) => (
+            <SwiperSlide key={i}>
+              {({ isActive }) => <CardReview review={review} isActive={isActive} />}
+            </SwiperSlide>
+          ))}
         </Swiper>
       </Box>
     </Flex>
